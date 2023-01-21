@@ -2,8 +2,10 @@ import requests
 import json
 import pandas as pd
 from apscheduler.schedulers.background import BackgroundScheduler
-import matplotlib.pyplot as plt
-import seaborn as sns
+# import matplotlib.pyplot as plt
+# import seaborn as sns
+from openpyxl import load_workbook
+import os
 
     
 base_url1 = 'https://api.stackexchange.com/2.2/questions'
@@ -18,8 +20,8 @@ data1 = response1.json()
 data2 = response2.json()
 
 
-print(json.dumps(data1, indent=2))
-print(json.dumps(data2, indent=2))
+# print(json.dumps(data1, indent=2))
+# print(json.dumps(data2, indent=2))
 
 df1 = pd.DataFrame(data1["items"])
 df2 = pd.DataFrame(data2["items"])
@@ -31,9 +33,25 @@ df2 = pd.DataFrame(data2["items"])
 df1 =df1[['question_id', 'title', 'creation_date']]
 df2 =df2[['question_id', 'answer_id', 'creation_date']]
 
-    
-# merged_df = df1.join(df2, lsuffix='_A', rsuffix='_B')
+# data merge
+merged_df = pd.merge(df1, df2, on='question_id')
 # print(merged_df)
-# merged_df.to_csv('records.csv', index=False)
 
-# print("Report updated!")
+# export data to excel
+filename = 'stackexchange_data.xlsx'
+
+# if os.path.isfile(filename):
+#     # open existing file
+#     writer = pd.ExcelWriter(filename, engine='openpyxl')
+#     writer.book = load_workbook(filename)
+#     start_row = writer.book['Sheet1'].max_row
+#     merged_df.to_excel(writer, index=False, header=False, startrow=start_row)
+#     writer.save()
+#     print('%s updated succesfully!', filename)
+# else:
+#     # create new file
+#     merged_df.to_excel(filename, index=False)
+#     print('%s created succesfully!', filename)
+
+merged_df.to_excel(filename, index=False)
+print(filename, ' created succesfully ')
