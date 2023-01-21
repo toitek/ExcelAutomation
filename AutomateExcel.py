@@ -1,7 +1,7 @@
 import requests
 import json
 import pandas as pd
-from apscheduler.schedulers.background import BackgroundScheduler
+# from apscheduler.schedulers.background import BackgroundScheduler
 # import matplotlib.pyplot as plt
 # import seaborn as sns
 from openpyxl import load_workbook
@@ -11,8 +11,8 @@ import os
 base_url1 = 'https://api.stackexchange.com/2.2/questions'
 base_url2 = 'https://api.stackexchange.com/2.2/answers'
 
-params1 = {'site':'stackoverflow','sort':'votes','tagged':'python'}
-params2 = {'site':'stackoverflow','sort':'votes','tagged':'python'}
+params1 = {'site':'stackoverflow','sort':'activity'}
+params2 = {'site':'stackoverflow','tagged':'python'}
 
 response1 = requests.get(base_url1, headers={'Accept-Charset': 'utf-8'},params=params1)
 response2 = requests.get(base_url2, headers={'Accept-Charset': 'utf-8'},params=params2)
@@ -35,23 +35,10 @@ df2 =df2[['question_id', 'answer_id', 'creation_date']]
 
 # data merge
 merged_df = pd.merge(df1, df2, on='question_id')
-# print(merged_df)
+print(merged_df)
 
-# export data to excel
+# export data to excel and save the new record into
 filename = 'stackexchange_data.xlsx'
-
-# if os.path.isfile(filename):
-#     # open existing file
-#     writer = pd.ExcelWriter(filename, engine='openpyxl')
-#     writer.book = load_workbook(filename)
-#     start_row = writer.book['Sheet1'].max_row
-#     merged_df.to_excel(writer, index=False, header=False, startrow=start_row)
-#     writer.save()
-#     print('%s updated succesfully!', filename)
-# else:
-#     # create new file
-#     merged_df.to_excel(filename, index=False)
-#     print('%s created succesfully!', filename)
-
 merged_df.to_excel(filename, index=False)
-print(filename, ' created succesfully ')
+print('Excel created succesfully ')
+
